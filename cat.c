@@ -9,7 +9,7 @@ int main(int argc, char *argv[]){
         if (usedFlags(argc, argv, &flag) == 0){
             printf("\nb e n s t v \n");
             printf("%d %d %d %d %d %d \n", flag.b, flag.e, flag.n, flag.s, flag.t, flag.v);
-            openFile(argc, argv);
+            openFile(argc, argv, flag);
         }
     }
 }
@@ -61,25 +61,64 @@ int usedFlags(int argc, char *argv[], struct short_flags *flag){
             break;
         }
     }
-    //printf("%d", optind);
+
     return err;
 }
 
 
-
-void openFile(int argc, char* path[]){
+void openFile(int argc, char* path[], struct short_flags flag){
     for (int i = optind; i < argc; i++){
-        FILE * fp;
+        FILE * fp = NULL;
         fp = fopen(path[i], "r");
-        if (fp!= NULL){
-        char buff[BUFFSIZE];
-        while(fgets(buff, sizeof(buff), fp)!= NULL){
-            printf("%s", buff);
-        }
-        fclose(fp);
+        if (fp != NULL){
+                int c;
+                while((c = fgetc(fp)) != EOF){
+                if (flag.e == 1){
+                    use_E(c);
+                }
+                if (flag.v == 1){
+                    use_v(&c);
+                }
+                printf("%c", c);
+            }
+            fclose(fp);
         }
         else
             printf("s21_cat: %s: No such file or directory\n", path[i]);
     }
 }
 
+void use_E(char c){
+    if (c == '\n'){
+        printf("$");
+    }
+}
+
+void use_v(int *c){
+    int check = 0;  
+    if (*c > 127){
+        check = 1;
+        *c = (*c % 128);
+        printf("M-");
+    }
+    if (check == 0){
+        if(((*c % 128)>=0 && (*c % 128) <=31 && (*c % 128)!= '\n' && (*c % 128)!= '\t') || (*c % 128) == 127){
+            if ((*c + 64) > 127){
+                *c = (*c + 64) % 128;
+            }
+            else
+                *c += 64;
+            printf("^");
+        }
+    }
+    else{
+        if(((*c % 128)>=0 && (*c % 128) <=31) || (*c % 128) == 127){
+            if ((*c + 64) > 127){
+                *c = (*c + 64) % 128;
+            }
+            else
+                *c += 64;
+            printf("^");
+        }    
+    }  
+}

@@ -1,0 +1,16 @@
+12345678912
+fgdljkghsdfjklnghlkdffgh
+dfhlgkfddgfgdfg
+fgdljkghsdfjklnghlkdffghf
+dgdg
+
+Hello
+World!
+This is a test file.
+It contains some non-printable characters: 
+␀ ␂ ␃ ␄ ␍ ␊ ␉
+␀
+␀
+␀
+␀ 
+Let's see how cat -v handles them.
