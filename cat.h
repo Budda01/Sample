@@ -27,5 +27,6 @@ void noArgs();
 int usedFlags(int argc, char *argv[], struct short_flags *flag);
 void use_E(char c);
 void use_v(int *c);
+void use_t(int *c);
 
 #endif

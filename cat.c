@@ -79,6 +79,9 @@ void openFile(int argc, char* path[], struct short_flags flag){
                 if (flag.v == 1){
                     use_v(&c);
                 }
+                if (flag.t == 1){
+                    use_t(&c);
+                }
                 printf("%c", c);
             }
             fclose(fp);
@@ -102,7 +105,7 @@ void use_v(int *c){
         printf("M-");
     }
     if (check == 0){
-        if(((*c % 128)>=0 && (*c % 128) <=31 && (*c % 128)!= '\n' && (*c % 128)!= '\t') || (*c % 128) == 127){
+        if(((*c % 128)>=0 && (*c % 128) <=31 && (*c % 128)!= 9 && (*c % 128)!= 10) || (*c % 128) == 127){
             if ((*c + 64) > 127){
                 *c = (*c + 64) % 128;
             }
@@ -121,4 +124,11 @@ void use_v(int *c){
             printf("^");
         }    
     }  
+}
+
+void use_t(int *c){
+    if (*c == 9){
+        *c = *c + 64;
+        printf("^");
+    }
 }
