@@ -68,21 +68,53 @@ int usedFlags(int argc, char *argv[], struct short_flags *flag){
 
 void openFile(int argc, char* path[], struct short_flags flag){
     for (int i = optind; i < argc; i++){
+        int count_s = 0;
+        int count_n = 0;
+        int count_b = 0;
+        int lin_num = 1;
         FILE * fp = NULL;
         fp = fopen(path[i], "r");
         if (fp != NULL){
-                int c;
-                while((c = fgetc(fp)) != EOF){
-                if (flag.e == 1){
-                    use_E(c);
+            int c;
+            while((c = fgetc(fp)) != EOF){
+
+                 if (flag.s == 1){
+                    if (c == 10){
+                        count_s++;
+                    }
+                    else
+                        count_s = 0;
                 }
-                if (flag.v == 1){
-                    use_v(&c);
+                if (count_s <= 2){
+                    if (flag.b == 1){
+                        if (count_b == 0 && c != 10){
+                            printf("%d  ", lin_num++);
+                        }
+                        if (c != 10)
+                            count_b++;
+                        else
+                            count_b = 0;
+                    }
+                    if (flag.n == 1 && flag.b == 0){
+                        if (count_n == 0)
+                            printf("%d  ", lin_num++);
+                        if (c != 10)
+                            count_n++;
+                        else
+                            count_n = 0;
+                    }
+
+                    if (flag.e == 1){
+                        use_E(c);
+                    }
+                    if (flag.v == 1){
+                        use_v(&c);
+                    }
+                    if (flag.t == 1){
+                        use_t(&c);
+                    }
+                    printf("%c", c);
                 }
-                if (flag.t == 1){
-                    use_t(&c);
-                }
-                printf("%c", c);
             }
             fclose(fp);
         }
@@ -92,7 +124,7 @@ void openFile(int argc, char* path[], struct short_flags flag){
 }
 
 void use_E(char c){
-    if (c == '\n'){
+    if (c == 10){
         printf("$");
     }
 }
