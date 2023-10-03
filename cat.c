@@ -7,8 +7,8 @@ int main(int argc, char *argv[]){
     }
     else{
         if (usedFlags(argc, argv, &flag) == 0){
-            printf("\nb e n s t v \n");
-            printf("%d %d %d %d %d %d \n", flag.b, flag.e, flag.n, flag.s, flag.t, flag.v);
+            // printf("\nb e n s t v \n");
+            // printf("%d %d %d %d %d %d \n", flag.b, flag.e, flag.n, flag.s, flag.t, flag.v);
             openFile(argc, argv, flag);
         }
     }
@@ -61,16 +61,13 @@ int usedFlags(int argc, char *argv[], struct short_flags *flag){
             break;
         }
     }
-
     return err;
 }
 
 
 void openFile(int argc, char* path[], struct short_flags flag){
     for (int i = optind; i < argc; i++){
-        int count_s = 0;
-        int count_n = 0;
-        int count_b = 0;
+        int count_s, count_bn = 0;
         int lin_num = 1;
         FILE * fp = NULL;
         fp = fopen(path[i], "r");
@@ -79,40 +76,23 @@ void openFile(int argc, char* path[], struct short_flags flag){
             while((c = fgetc(fp)) != EOF){
 
                  if (flag.s == 1){
-                    if (c == 10){
-                        count_s++;
-                    }
-                    else
-                        count_s = 0;
+                    if (c == 10){ count_s++; }
+                    else {count_s = 0;}
                 }
                 if (count_s <= 2){
                     if (flag.b == 1){
-                        if (count_b == 0 && c != 10){
-                            printf("%d  ", lin_num++);
-                        }
-                        if (c != 10)
-                            count_b++;
-                        else
-                            count_b = 0;
+                        if (count_bn == 0 && c != 10){ printf("%6d\t", lin_num++); }
+                        if (c != 10){ count_bn++; }
+                        else { count_bn = 0; }
                     }
                     if (flag.n == 1 && flag.b == 0){
-                        if (count_n == 0)
-                            printf("%d  ", lin_num++);
-                        if (c != 10)
-                            count_n++;
-                        else
-                            count_n = 0;
+                        if (count_bn == 0) { printf("%6d\t", lin_num++); }
+                        if (c != 10) { count_bn++; }
+                        else { count_bn = 0; }
                     }
-
-                    if (flag.e == 1){
-                        use_E(c);
-                    }
-                    if (flag.v == 1){
-                        use_v(&c);
-                    }
-                    if (flag.t == 1){
-                        use_t(&c);
-                    }
+                    if (flag.e == 1){use_E(c);}
+                    if (flag.v == 1){use_v(&c);}
+                    if (flag.t == 1){use_t(&c);}
                     printf("%c", c);
                 }
             }
