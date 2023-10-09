@@ -8,12 +8,13 @@ int main() {
         printf("Ошибка открытия файла\n");
         return 1;
     }
-     for (ascii_code = 0; ascii_code< ; ascii_code++){
+    for (ascii_code = 0; ascii_code< 260; ascii_code++){
         fprintf(file, "%d", ascii_code);
         fputc(' ', file);
         fputc(ascii_code, file);
         fputc('\n', file);
     }
+   
 
     // Закрываем файл
     fclose(file);

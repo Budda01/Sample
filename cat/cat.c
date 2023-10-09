@@ -61,6 +61,7 @@ int usedFlags(int argc, char *argv[], struct short_flags *flag){
             break;
         }
     }
+   
     return err;
 }
 
@@ -75,11 +76,12 @@ void openFile(int argc, char* path[], struct short_flags flag){
             int c;
             while((c = fgetc(fp)) != EOF){
 
-                 if (flag.s == 1){
+                if (flag.s == 1){
                     if (c == 10){ count_s++; }
                     else {count_s = 0;}
                 }
                 if (count_s <= 2){
+                    
                     if (flag.b == 1){
                         if (count_bn == 0 && c != 10){ printf("%6d\t", lin_num++); }
                         if (c != 10){ count_bn++; }
