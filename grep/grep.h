@@ -25,8 +25,11 @@ struct short_flags
     int o;
 };
 
-int usedFlags(int argc, char *argv[], struct short_flags *flag);
+int usedFlags(int argc, char *argv[], struct short_flags *flag, char *buf);
 void openFile(int argc, char* path[], struct short_flags flag, char *buf);
 void grepWorks(FILE * fp, struct short_flags flag, regex_t template);
-
+void use_e(char *buf);
+void use_f(char *argv[], struct short_flags flag, char *buf);
+int output(int match, struct short_flags flag, char *line, int suit_line, int count_line);
+int printing(struct short_flags flag, char *line, int suit_line, int count_line);
 #endif
