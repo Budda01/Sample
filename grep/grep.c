@@ -161,7 +161,7 @@ int printing(struct short_flags flag, char *line, int suit_line, int count_line)
                 suit_line++;
     }else{
         if (flag.n == 1)
-            printf("%d   ", count_line);
+            printf("%d:", count_line);
     printf("%s", line);
     }
     return suit_line;
