@@ -9,6 +9,7 @@
 #include <regex.h>
 
 #define BUFFSIZE 4096
+#define FILENAMESIZE 256
 
 
 struct short_flags
@@ -27,9 +28,9 @@ struct short_flags
 
 int usedFlags(int argc, char *argv[], struct short_flags *flag, char *buf);
 void openFile(int argc, char* path[], struct short_flags flag, char *buf);
-void grepWorks(FILE * fp, struct short_flags flag, regex_t template);
+void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name);
 void use_e(char *buf);
 void use_f(char *argv[], struct short_flags flag, char *buf);
-int output(int match, struct short_flags flag, char *line, int suit_line, int count_line);
-int printing(struct short_flags flag, char *line, int suit_line, int count_line);
+int output(FILE * fp, int match, struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name);
+int printing(struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name);
 #endif
