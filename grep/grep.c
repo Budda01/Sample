@@ -8,8 +8,8 @@ int main(int argc, char *argv[]){
     }
     else{
         if (usedFlags(argc, argv, &flag, buf) == 0){
-            // printf("\ne i v c l n h s f o\n");
-            // printf("%d %d %d %d %d %d %d %d %d %d\n", flag.e, flag.i, flag.v, flag.c, flag.l, flag.n, flag.h, flag.s, flag.f, flag.o);
+            printf("\ne i v c l n h s f o\n");
+            printf("%d %d %d %d %d %d %d %d %d %d\n", flag.e, flag.i, flag.v, flag.c, flag.l, flag.n, flag.h, flag.s, flag.f, flag.o);
             openFile(argc, argv, flag, buf);
         }
     }
@@ -115,7 +115,7 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
         mod = REG_EXTENDED;
     }
     
-    //printf("BUFFER %s\n", buf);
+    printf("BUFFER %s\n", buf);
     regex_t template;
     regcomp(&template, buf, mod);
     
@@ -164,15 +164,15 @@ void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_f
 }
 
 int output(FILE * fp, int match, struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name, regmatch_t matches[]){
-    if (flag.v == 1 && match != 0){
+    if (flag.v == 1 && match != 0 && flag.o == 0){
         suit_line = printing(flag, line, suit_line, count_line, count_file, file_name, matches);
-        if (feof(fp) && strcmp(line + strlen(line) - 1, "\n") != 0 && flag.c == 0 && flag.l == 0){
+        if (feof(fp) && strcmp(line, "") != 0 && flag.c == 0 && flag.l == 0){
             printf("\n");
         }     
     }
-    else if (match == 0){
+    else if (flag.v == 0 && match == 0){
         suit_line = printing(flag, line, suit_line, count_line, count_file, file_name, matches);
-        if (feof(fp) && strcmp(line, "") != 0 && flag.l == 0 && flag.o == 0){
+        if (feof(fp) && strcmp(line, "") != 0 && flag.c == 0 && flag.l == 0 && flag.o == 0){
             printf("\n");
         }
     }
