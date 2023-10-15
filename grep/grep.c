@@ -8,8 +8,8 @@ int main(int argc, char *argv[]){
     }
     else{
         if (usedFlags(argc, argv, &flag, buf) == 0){
-            printf("\ne i v c l n h s f o\n");
-            printf("%d %d %d %d %d %d %d %d %d %d\n", flag.e, flag.i, flag.v, flag.c, flag.l, flag.n, flag.h, flag.s, flag.f, flag.o);
+            // printf("\ne i v c l n h s f o\n");
+            // printf("%d %d %d %d %d %d %d %d %d %d\n", flag.e, flag.i, flag.v, flag.c, flag.l, flag.n, flag.h, flag.s, flag.f, flag.o);
             openFile(argc, argv, flag, buf);
         }
     }
@@ -115,8 +115,9 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
         mod = REG_EXTENDED;
     }
     
-    printf("BUFFER %s\n", buf);
+    //printf("BUFFER %s\n", buf);
     regex_t template;
+    regmatch_t matches[MAXMATCHES];
     regcomp(&template, buf, mod);
     
     for (int i = optind; i < argc; i++){
@@ -124,7 +125,7 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
         fp = fopen(argv[i], "r");
         if (fp != NULL){
             char *file_name = argv[i];
-            grepWorks(fp, flag, template, count_file, file_name);
+            grepWorks(fp, flag, template, count_file, file_name, matches);
             fclose(fp);
         }
         else{
@@ -136,8 +137,7 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
    regfree(&template);  
 }
 
-void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name){
-    regmatch_t matches[MAXMATCHES];
+void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name, regmatch_t matches[]){
     char line[BUFFSIZE];
     int match;
     int suit_line = 0;
