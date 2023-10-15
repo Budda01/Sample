@@ -98,6 +98,20 @@ void use_l(char *file_name, int suit_line){
     }
 }
 
+void use_o(struct short_flags flag, regmatch_t matches, regex_t template, char *line, int count_line, int count_file, char *file_name){
+    int now_char = 0;
+    line[strcspn(line, "\n")] = 0;
+    while (regexec(&template, line + now_char, 1, &matches, 0) == 0){
+        if (flag.h == 0 && count_file > 1)
+            printf("%s:", file_name);
+        if (flag.n == 1)
+            printf("%d:", count_line);
+        printf("%.*s\n", matches.rm_eo - matches.rm_so, line + now_char + matches.rm_so);
+        now_char += matches.rm_eo;
+    }
+
+}
+
 void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
  
     if (flag.e == 0 && flag.f == 0){
@@ -117,7 +131,7 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
     
     //printf("BUFFER %s\n", buf);
     regex_t template;
-    regmatch_t matches[MAXMATCHES];
+    regmatch_t matches;
     regcomp(&template, buf, mod);
     
     for (int i = optind; i < argc; i++){
@@ -137,20 +151,18 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
    regfree(&template);  
 }
 
-void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name, regmatch_t matches[]){
+void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name, regmatch_t matches){
     char line[BUFFSIZE];
     int match;
     int suit_line = 0;
     int count_line = 0;
     while(fgets(line, BUFFSIZE, fp) != NULL){
-        if (flag.o == 1){
-            line[strcspn(line, "\n")] = 0;
-            match = regexec(&template, line, MAXMATCHES, matches, 0);
-        }
-        else
-            match = regexec(&template, line, 0, NULL, 0);
+        match = regexec(&template, line, 0, NULL, 0);
         count_line++;
-        suit_line = output(fp, match, flag, line, suit_line, count_line, count_file, file_name, matches);
+        suit_line = output(fp, match, flag, line, suit_line, count_line, count_file, file_name);
+        if (flag.o == 1 && flag.c == 0 && flag.v == 0 && flag.l == 0){
+            use_o(flag, matches, template, line, count_line, count_file, file_name);
+        }
     }
     if (flag.c == 1 && flag.l == 0){
         if (flag.h == 0 && count_file > 1){
@@ -163,15 +175,15 @@ void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_f
     }
 }
 
-int output(FILE * fp, int match, struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name, regmatch_t matches[]){
-    if (flag.v == 1 && match != 0 && flag.o == 0){
-        suit_line = printing(flag, line, suit_line, count_line, count_file, file_name, matches);
-        if (feof(fp) && strcmp(line, "") != 0 && flag.c == 0 && flag.l == 0){
+int output(FILE * fp, int match, struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name){
+    if (flag.v == 1 && match != 0){
+        suit_line = printing(flag, line, suit_line, count_line, count_file, file_name);
+        if (feof(fp) && strcmp(line, "") != 0 && flag.c == 0 && flag.l == 0 && flag.o == 0){
             printf("\n");
         }     
     }
     else if (flag.v == 0 && match == 0){
-        suit_line = printing(flag, line, suit_line, count_line, count_file, file_name, matches);
+        suit_line = printing(flag, line, suit_line, count_line, count_file, file_name);
         if (feof(fp) && strcmp(line, "") != 0 && flag.c == 0 && flag.l == 0 && flag.o == 0){
             printf("\n");
         }
@@ -180,20 +192,18 @@ int output(FILE * fp, int match, struct short_flags flag, char *line, int suit_l
 }
 
 
-int printing(struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name, regmatch_t matches[]){
-    if (flag.h == 0 && count_file > 1 && flag.c == 0 && flag.l == 0){
+int printing(struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name){
+    if (flag.h == 0 && count_file > 1 && flag.c == 0 && flag.l == 0 && flag.o == 0){
         printf("%s:", file_name);
     }
     if (flag.c == 1 || flag.l == 1){
             suit_line++;
     }else{
-        if (flag.n == 1)
+        if (flag.n == 1 && flag.o == 0)
             printf("%d:", count_line);
-        if (flag.o == 1){
-            printf("%.*s\n", (int)(matches[0].rm_eo - matches[0].rm_so), line + matches[0].rm_so);
-        }
-        else
+        if (flag.o == 0){
             printf("%s", line);
+        }
     }
     return suit_line;
 }
