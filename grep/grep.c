@@ -7,17 +7,17 @@ int main(int argc, char *argv[]){
         printf("Usage: grep [OPTION]... PATTERNS [FILE]...\n");
     }
     else{
-        if (usedFlags(argc, argv, &flag, buf) == 0){
-            // printf("\ne i v c l n h s f o\n");
-            // printf("%d %d %d %d %d %d %d %d %d %d\n", flag.e, flag.i, flag.v, flag.c, flag.l, flag.n, flag.h, flag.s, flag.f, flag.o);
+        usedFlags(argc, argv, &flag, buf);
+        if (flag.err == 0){
+            // printf("\ne i v c l n h s f o err\n");
+            // printf("%d %d %d %d %d %d %d %d %d %d %d\n", flag.e, flag.i, flag.v, flag.c, flag.l, flag.n, flag.h, flag.s, flag.f, flag.o, flag.err);
             openFile(argc, argv, flag, buf);
         }
     }
 }
 
 
-int usedFlags(int argc, char *argv[], struct short_flags *flag, char *buf){
-    int err = 0;
+void usedFlags(int argc, char *argv[], struct short_flags *flag, char *buf){
     char opt; 
 
     while ((opt = getopt(argc, argv, "e:ivclnhsf:o")) != -1){
@@ -50,17 +50,16 @@ int usedFlags(int argc, char *argv[], struct short_flags *flag, char *buf){
             break;
         case 'f':
             flag->f += 1;
-            use_f(argv, *flag, buf);
+            use_f(argv, flag, buf);
             break;
         case 'o':
             flag->o = 1;
             break;
         default:
-            err = 1;
+            flag->err = 1;
             break;
         }
     }
-    return err;
 }
 
 void use_e(char *buf){
@@ -69,27 +68,31 @@ void use_e(char *buf){
     strcat(buf, optarg);
 }   
 
-void use_f(char *argv[], struct short_flags flag, char *buf){
+void use_f(char *argv[], struct short_flags *flag, char *buf){
     if (strcmp(buf, "") != 0){
         strcat(buf, "|");
     }
     FILE *fl = fopen(optarg, "r");
-    if (fl == NULL) {
-        if (flag.s == 0){
-            printf("%s : %s No such file or directory\n", argv[0], optarg);
-        } 
-    }
-    char symb[1] = "";
-    char c; 
-    while((c = fgetc(fl)) != EOF){
-        if (c != 10){
-            symb[0] = c;
-            strcat(buf, symb);
+    if (fl == NULL){
+        if ((*flag).err < 1){
+            if ((*flag).s == 0)
+                fprintf(stderr, "%s: %s: No such file or derectory", argv[0], argv[optind]);
+        (*flag).err++;  
         }
-        else
-            strcat(buf, "|");
     }
-    fclose(fl);
+    else{
+        char symb[1] = "";
+        char c; 
+        while((c = fgetc(fl)) != EOF){
+            if (c != 10){
+                symb[0] = c;
+                strcat(buf, symb);
+            }
+            else
+                strcat(buf, "|");
+        }
+        fclose(fl);
+    }
 }
 
 void use_l(char *file_name, int suit_line){
@@ -140,15 +143,15 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
         if (fp != NULL){
             char *file_name = argv[i];
             grepWorks(fp, flag, template, count_file, file_name, matches);
-            fclose(fp);
         }
         else{
             if (flag.s == 0){
                 printf("%s : %s No such file or directory\n", argv[0], argv[i]);
             }
         }
+        fclose(fp);
     }
-   regfree(&template);  
+    regfree(&template);  
 }
 
 void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name, regmatch_t matches){
