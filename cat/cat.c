@@ -67,9 +67,9 @@ int usedFlags(int argc, char *argv[], struct short_flags *flag){
 
 
 void openFile(int argc, char* path[], struct short_flags flag){
+    int lin_num = 1;
+    int count_s, count_bn = 0;
     for (int i = optind; i < argc; i++){
-        int count_s, count_bn = 0;
-        int lin_num = 1;
         FILE * fp = NULL;
         fp = fopen(path[i], "r");
         if (fp != NULL){
@@ -129,7 +129,7 @@ void use_v(int *c){
         }
     }
     else{
-        if(((*c % 128)>=0 && (*c % 128) <=31) || (*c % 128) == 127){
+        if(((*c % 128)>=0 && (*c % 128) <=31  && (*c % 128)!= 9 && (*c % 128)!= 10) || (*c % 128) == 127){
             if ((*c + 64) > 127){
                 *c = (*c + 64) % 128;
             }
