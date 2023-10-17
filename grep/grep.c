@@ -76,7 +76,7 @@ void use_f(char *argv[], struct short_flags *flag, char *buf){
     if (fl == NULL){
         if ((*flag).err < 1){
             if ((*flag).s == 0)
-                fprintf(stderr, "%s: %s: No such file or derectory", argv[0], argv[optind]);
+                fprintf(stderr, "%s: %s: No such file or derectory\n", argv[0], argv[optind]);
         (*flag).err++;  
         }
     }
@@ -142,19 +142,19 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
         fp = fopen(argv[i], "r");
         if (fp != NULL){
             char *file_name = argv[i];
-            grepWorks(fp, flag, template, count_file, file_name, matches);
+            staticOutput(fp, flag, template, count_file, file_name, matches);
+            fclose(fp);
         }
         else{
             if (flag.s == 0){
                 printf("%s : %s No such file or directory\n", argv[0], argv[i]);
             }
         }
-        fclose(fp);
     }
     regfree(&template);  
 }
 
-void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name, regmatch_t matches){
+void staticOutput(FILE * fp, struct short_flags flag, regex_t template, int count_file, char *file_name, regmatch_t matches){
     char line[BUFFSIZE];
     int match;
     int suit_line = 0;
@@ -162,7 +162,7 @@ void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_f
     while(fgets(line, BUFFSIZE, fp) != NULL){
         match = regexec(&template, line, 0, NULL, 0);
         count_line++;
-        suit_line = output(fp, match, flag, line, suit_line, count_line, count_file, file_name);
+        suit_line = dynamicOutput(fp, match, flag, line, suit_line, count_line, count_file, file_name);
         if (flag.o == 1 && flag.c == 0 && flag.v == 0 && flag.l == 0){
             use_o(flag, matches, template, line, count_line, count_file, file_name);
         }
@@ -178,7 +178,7 @@ void grepWorks(FILE * fp, struct short_flags flag, regex_t template, int count_f
     }
 }
 
-int output(FILE * fp, int match, struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name){
+int dynamicOutput(FILE * fp, int match, struct short_flags flag, char *line, int suit_line, int count_line, int count_file, char *file_name){
     if (flag.v == 1 && match != 0){
         suit_line = printing(flag, line, suit_line, count_line, count_file, file_name);
         if (feof(fp) && strcmp(line, "") != 0 && flag.c == 0 && flag.l == 0 && flag.o == 0){
