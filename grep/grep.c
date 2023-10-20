@@ -109,7 +109,8 @@ void use_o(struct short_flags flag, regmatch_t matches, regex_t template, char *
             printf("%s:", file_name);
         if (flag.n == 1)
             printf("%d:", count_line);
-        printf("%.*s\n", matches.rm_eo - matches.rm_so, line + now_char + matches.rm_so);
+        int len_line = matches.rm_eo - matches.rm_so;
+        printf("%.*s\n", len_line, line + now_char + matches.rm_so);
         now_char += matches.rm_eo;
     }
 
