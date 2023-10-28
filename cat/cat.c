@@ -68,7 +68,8 @@ int usedFlags(int argc, char *argv[], struct short_flags *flag){
 
 void openFile(int argc, char* path[], struct short_flags flag){
     int lin_num = 1;
-    int count_s, count_bn = 0;
+    int count_s = 1;
+    int count_bn = 0;
     for (int i = optind; i < argc; i++){
         FILE * fp = NULL;
         fp = fopen(path[i], "r");
