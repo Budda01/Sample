@@ -23,6 +23,47 @@ void noArgs(){
         count++;
     }  
 }
+void use_v(int *c){
+    int check = 0;  
+    if (*c > 127){
+        check = 1;
+        *c = (*c % 128);
+        printf("M-");
+    }
+    if (check == 0){
+        if(((*c % 128)>=0 && (*c % 128) <=31 && (*c % 128)!= 9 && (*c % 128)!= 10) || (*c % 128) == 127){
+            if ((*c + 64) > 127){
+                *c = (*c + 64) % 128;
+            }
+            else
+                *c += 64;
+            printf("^");
+        }
+    }
+    else{
+        if(((*c % 128)>=0 && (*c % 128) <=31) || (*c % 128) == 127){
+            if ((*c + 64) > 127){
+                *c = (*c + 64) % 128;
+            }
+            else
+                *c += 64;
+            printf("^");
+        }    
+    }  
+}
+
+void use_t(int *c){
+    if (*c == 9){
+        *c = *c + 64;
+        printf("^");
+    }
+}
+
+void use_E(char c){
+    if (c == 10){
+        printf("$");
+    }
+}
 
 int usedFlags(int argc, char *argv[], struct short_flags *flag){
     int err = 0;
@@ -102,48 +143,8 @@ void openFile(int argc, char* path[], struct short_flags flag){
             fclose(fp);
         }
         else
-            printf("s21_cat: %s: No such file or directory\n", path[i]);
+            fprintf(stderr, "%s: %s: No such file or derectory", path[0], path[i]);
     }
 }
 
-void use_E(char c){
-    if (c == 10){
-        printf("$");
-    }
-}
 
-void use_v(int *c){
-    int check = 0;  
-    if (*c > 127){
-        check = 1;
-        *c = (*c % 128);
-        printf("M-");
-    }
-    if (check == 0){
-        if(((*c % 128)>=0 && (*c % 128) <=31 && (*c % 128)!= 9 && (*c % 128)!= 10) || (*c % 128) == 127){
-            if ((*c + 64) > 127){
-                *c = (*c + 64) % 128;
-            }
-            else
-                *c += 64;
-            printf("^");
-        }
-    }
-    else{
-        if(((*c % 128)>=0 && (*c % 128) <=31) || (*c % 128) == 127){
-            if ((*c + 64) > 127){
-                *c = (*c + 64) % 128;
-            }
-            else
-                *c += 64;
-            printf("^");
-        }    
-    }  
-}
-
-void use_t(int *c){
-    if (*c == 9){
-        *c = *c + 64;
-        printf("^");
-    }
-}
