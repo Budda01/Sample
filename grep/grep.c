@@ -148,7 +148,7 @@ void openFile(int argc, char* argv[], struct short_flags flag, char *buf){
         }
         else{
             if (flag.s == 0){
-                printf("%s : %s No such file or directory\n", argv[0], argv[i]);
+                fprintf(stderr, "%s: %s: No such file or derectory", argv[0], argv[i]);
             }
         }
     }
